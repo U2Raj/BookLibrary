@@ -4,9 +4,14 @@ import { useParams } from "react-router-dom";
 import type { BookModel } from "../../models/BookModel";
 import { SpinnerLoading } from "../../components/SpinnerLoading";
 import { CheckoutBox } from "./components/CheckoutBox";
+import { LatestReviews } from "./components/LatestReviews";
+import type { ReviewModel } from "../../models/ReviewModel";
 
 export const BookCheckoutPage = () => {
   const { id } = useParams<{ id: string }>();
+  const [reviews, setReviews] = useState<ReviewModel[]>([]);
+
+
   const [book, setBook] = useState<BookModel>();
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState<string | null>(null);
@@ -19,10 +24,13 @@ export const BookCheckoutPage = () => {
         return;
       }
       try {
-        const data = await bookService.getBookById(id);
-        console.log(data);
-        setBook(data);
-        setIsLoading(false);
+         const [bookData, reviewsData] = await Promise.all([
+          bookService.getBookById(id),
+          bookService.getBookReviewsById(id)
+         ])
+         setBook(bookData);
+         setReviews(reviewsData.content);
+         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
         console.error("Error fetching books:", error);
@@ -70,6 +78,7 @@ export const BookCheckoutPage = () => {
           <CheckoutBox book={book}/>
         </div>
         <hr />
+        <LatestReviews reviews={reviews} bookId={book?.id} />
       </div>
       {/* Mobile View */}
       <div className="container d-lg-none mt-5">
@@ -90,6 +99,7 @@ export const BookCheckoutPage = () => {
         </div>
         <CheckoutBox book={book}/>
         <hr />
+         <LatestReviews reviews={reviews} bookId={book?.id} />
       </div>
     </>
   );
