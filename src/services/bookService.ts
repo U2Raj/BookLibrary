@@ -74,9 +74,9 @@ export const bookService = {
   },
 
   //getBook reviews by id
-    async getBookReviewsById(bookId : string): Promise<ReviewResponse> {
+    async getBookReviewsById(bookId : string, pageNo:number=0, pageSize:number=3): Promise<ReviewResponse> {
     const response = await fetch(
-      `${BASE_URL}/reviews/book/${bookId}`,
+      `${BASE_URL}/reviews/book/${bookId}?pageNo=${pageNo}&${pageSize}`,
     );
 
     if (!response.ok) {

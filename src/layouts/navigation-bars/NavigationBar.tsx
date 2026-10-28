@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 export const NavigationBar = () => {
+  const { isAuthenticated, login, logout, user } = useAuth();
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark main-color py-3">
       <div className="container-fluid">
-        <NavLink to="/">
-          <span className="navbar-brand">Umang Reads</span>
-        </NavLink>
+        <span className="navbar-brand">Luv 2 Read</span>
         <button
           className="navbar-toggler"
           type="button"
@@ -21,22 +22,59 @@ export const NavigationBar = () => {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink to="/" className="nav-link">
+              <NavLink className="nav-link" to="/">
                 Home
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/search" className="nav-link">
+              <NavLink className="nav-link" to="/search">
                 Search Books
               </NavLink>
             </li>
+            {isAuthenticated && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/shelf">
+                  Shelf
+                </NavLink>
+              </li>
+            )}
+            {isAuthenticated && user?.roles?.includes("admin") && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/admin/messages">
+                  Admin
+                </NavLink>
+              </li>
+            )}
           </ul>
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item m-1">
-              <a type="button" className="btn btn-outline-light" href="#">
-                Sign in
-              </a>
-            </li>
+            {isAuthenticated ? (
+              <>
+                <li className="nav-item m-1 d-none d-lg-flex align-items-center">
+                  <span className="navbar-text text-light me-3">
+                    Hello, {user?.name || user?.username || "User"}
+                  </span>
+                </li>
+                <li className="nav-item m-1">
+                  <button
+                    type="button"
+                    className="btn btn-outline-light"
+                    onClick={logout}
+                  >
+                    Sign out
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item m-1">
+                <button
+                  type="button"
+                  className="btn btn-outline-light"
+                  onClick={login}
+                >
+                  Sign in
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>
