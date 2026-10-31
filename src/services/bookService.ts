@@ -1,5 +1,6 @@
 import type { BookModel } from "../models/BookModel";
 import type { ReviewModel } from "../models/ReviewModel";
+import { fetchWithAuth } from "./fetchWithAuth";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,6 +18,12 @@ interface ReviewResponse {
     totalElements: number;
     totalPages: number;
   };
+}
+
+interface ReviewRequest {
+  bookId:number,
+  rating:number,
+  reviewDescription?:string
 }
 
 export const bookService = {
@@ -84,4 +91,20 @@ export const bookService = {
     }
     return await response.json();
   },
+
+  async createReview(reviewRequest:ReviewRequest) : Promise<ReviewModel> {
+       const response = await fetchWithAuth(`${BASE_URL}/reviews`,{
+        method: 'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify(reviewRequest)
+       });
+
+       if(!response.ok){
+        throw new Error('Failed to craate review');
+       }
+
+       return response.json();
+  }
 };
