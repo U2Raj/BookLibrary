@@ -20,7 +20,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<SearchBooksPage />} />
           <Route path="/checkout/:id" element={<BookCheckoutPage />} />
-          <Route path="/reviewlist/:id" element={<ReviewListPage />} />
+          <Route path="/reviewlist/:bookId" element={<ReviewListPage />} />
           <Route path="/protectedPage" element={<PrivateRoute><ProtectedPage /></PrivateRoute>} />
         </Routes>
       </main>
