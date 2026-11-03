@@ -6,11 +6,12 @@ import { SpinnerLoading } from "../../components/SpinnerLoading";
 import { CheckoutBox } from "./components/CheckoutBox";
 import { LatestReviews } from "./components/LatestReviews";
 import type { ReviewModel } from "../../models/ReviewModel";
+import { StarsReview } from "../../components/StarsReview";
 
 export const BookCheckoutPage = () => {
   const { id } = useParams<{ id: string }>();
   const [reviews, setReviews] = useState<ReviewModel[]>([]);
-
+  const [averageRating, setAverageRating] = useState<number>(0);
 
   const [book, setBook] = useState<BookModel>();
   const [isLoading, setIsLoading] = useState(true);
@@ -24,12 +25,14 @@ export const BookCheckoutPage = () => {
         return;
       }
       try {
-         const [bookData, reviewsData] = await Promise.all([
+         const [bookData, reviewsData, rating] = await Promise.all([
           bookService.getBookById(id),
-          bookService.getBookReviewsById(id)
+          bookService.getBookReviewsById(id),
+          bookService.getBookAverageRating(id)
          ])
          setBook(bookData);
          setReviews(reviewsData.content);
+         setAverageRating(rating);
          setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -67,6 +70,9 @@ export const BookCheckoutPage = () => {
               height="349"
               alt="Book"
             />
+            <div className="mt-2">
+              <StarsReview rating={averageRating} size={20}/>
+            </div>
           </div>
           <div className="col-4 col-md-4 container">
             <div className="ml-2">
@@ -82,13 +88,16 @@ export const BookCheckoutPage = () => {
       </div>
       {/* Mobile View */}
       <div className="container d-lg-none mt-5">
-        <div className="d-flex justify-content-center align-items-center">
+        <div className="d-flex flex-column justify-content-center align-items-center">
           <img
             src={book.img}
             width="226"
             height="349"
             alt="Book"
           />
+           <div className="mt-2">
+              <StarsReview rating={averageRating} size={20}/>
+            </div>
         </div>
         <div className="mt-4">
           <div className="ml-2">

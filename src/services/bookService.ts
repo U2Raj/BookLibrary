@@ -106,5 +106,13 @@ export const bookService = {
        }
 
        return response.json();
+  },
+
+  async getBookAverageRating(bookId:string) : Promise<number>{
+       const response = await fetch(`${BASE_URL}/reviews/book/${bookId}/average-rating`);
+       if(!response.ok){
+        throw new Error("Failed to fetch average rating");
+       }
+       return response.json();
   }
 };
